@@ -73,7 +73,7 @@ def create_recipe(request):
                 recipe.images.create(url=image)
         if data["ingredients"]:
             for ingredient in data['ingredients']:
-                recipe.ingredients.create(name=ingredient)
+                recipe.ingredients.create(details=ingredient)
         if data["instructions"]:
             for instruction in data['instructions']:
                 recipe.instructions.create(details=instruction)
@@ -101,7 +101,7 @@ def update_recipe(request, slug):
                 recipe.images.create(url=image)
         if data["ingredients"]:
             for ingredient in data['ingredients']:
-                recipe.ingredients.create(name=ingredient)
+                recipe.ingredients.create(details=ingredient)
         if data["instructions"]:
             for instruction in data['instructions']:
                 recipe.instructions.create(details=instruction)
