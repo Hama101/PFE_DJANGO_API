@@ -1,11 +1,25 @@
+#django stuff
 from django.shortcuts import render , redirect
 from django.http import JsonResponse
 from .models import Recipe
+from django.core.paginator import Paginator
+#rest framework
 from .serializers import RecipeSerializer
-
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
+#my utils
+from .utils import create_recipe_by_data
+
+
+#usefull and global functions
+#this function is used to paginate some data
+def paginated_data(data,page_number=None,page_size=10):
+    if not page_number:
+        page_number = 1
+    paginator = Paginator(data, page_size)
+    page_objs = paginator.get_page(page_number)
+    return page_objs
 
 
 # Create your views here.
@@ -18,6 +32,9 @@ def index(request):
 @api_view(['GET'])
 def recipe_list(request):
     recipes = Recipe.objects.all()
+    page_number = request.GET.get('page')
+    #set a default page number if not specified
+    recipes = paginated_data(recipes, page_number,20)
     return JsonResponse({"data": [recipe.to_dict() for recipe in recipes]},json_dumps_params={'indent': 4})
 
 
@@ -27,7 +44,9 @@ def recipe_list(request):
 def filterd_recipe_list(request):
     if request.method == 'GET':
         query = request.GET.get('query')
-        recipes = Recipe.objects.filter(name__contains=query)
+        recipes = Recipe.objects.filter(name__icontains=query)
+        page_number = request.GET.get('page')
+        recipes = paginated_data(recipes, page_number,6)
         return JsonResponse({"data": [recipe.to_dict() for recipe in recipes]},json_dumps_params={'indent': 4})
 
 
@@ -55,32 +74,7 @@ def delete_recipe_by_slug(request, slug):
 def create_recipe(request):
     if request.method == 'POST':
         data = request.data
-        recipe = Recipe(
-            time=data['time'],
-            name=data['name'],
-            rating=data['rating'],
-        )
-        recipe.save()
-        '''
-            let's explain what is happening here:
-            we are checking if data contains a key called ingredients,images,instructions and vedios
-            if it does, we are going to save it to the database by looping through the list and creating a 
-                new instance of the RecipeIngredients, RecipeImages, RecipeInstructions and RecipeVedios models
-            than we update it with the new data
-        '''
-        if data["images"]:
-            for image in data['images']:
-                recipe.images.create(url=image)
-        if data["ingredients"]:
-            for ingredient in data['ingredients']:
-                recipe.ingredients.create(details=ingredient)
-        if data["instructions"]:
-            for instruction in data['instructions']:
-                recipe.instructions.create(details=instruction)
-        if data["vedios"]:
-            for vedio in data['vedios']:
-                recipe.vedios.create(url=vedio)
-        recipe.save()
+        recipe = create_recipe_by_data(data = data , Recipe = Recipe)
         return JsonResponse({"data": recipe.to_dict()},json_dumps_params={'indent': 4})
 
 
