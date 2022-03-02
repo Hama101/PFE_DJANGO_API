@@ -29,7 +29,6 @@ def unique_slug_generator(instance, new_slug=None):
     return slug
 
 
-
 def create_new_ref_number():
     return str(random.randint(10000, 99999))
 

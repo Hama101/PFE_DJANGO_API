@@ -35,6 +35,10 @@ def auto_add_one_recipe(url):
 
 @api_view(['GET'])
 def auto_add_recipes(request):
+    #check if the request user is an admin
+    if not request.user.is_superuser:
+        return JsonResponse({"message":"you are not allowed to do this"})
+
     #read lines from urls.txt and for each line call auto_add_one_recipe
     #read lines from the done.txt
     done_urls = []
