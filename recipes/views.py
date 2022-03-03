@@ -23,8 +23,9 @@ def paginated_data(data,page_number=None,page_size=10):
 
 
 # Create your views here.
+@api_view(['GET'])
 def index(request):
-    return redirect('recipes:recipe_list')
+    return JsonResponse({'site':'https://sea-of-food.herokuapp.com/'})
 
 
 #a get method to get all the list of recipes
