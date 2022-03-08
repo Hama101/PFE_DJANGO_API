@@ -57,16 +57,18 @@ class Recipe(models.Model):
     def __str__(self):
         return f"{self.name}--->{self.slug}"
     
-    @property
-    def thumbnail(self):
-        if self.images.all():
-            return self.images.all()[0].url
-        else:
-            return None
 
     @property
     def image_urls(self):
-        return [image.url for image in self.images.all()]
+        return [image.url for image in self.images.all() if "http" in image.url]
+
+    @property
+    def thumbnail(self):
+        if self.images.all():
+            return self.image_urls[0]
+        else:
+            return None
+    
     
     @property
     def ingredients_details(self):
@@ -82,6 +84,7 @@ class Recipe(models.Model):
 
     def to_dict(self):
         return {
+            "thumbnail":self.thumbnail,
             "images": self.image_urls,
             "ingredients": self.ingredients_details,
             "instructions": self.instructions_details,

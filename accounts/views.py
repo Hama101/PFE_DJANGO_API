@@ -17,7 +17,6 @@ from rest_framework import generics, permissions
 
 
 #classes for login api auth 
-
 class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
     

@@ -32,11 +32,19 @@ def index(request):
 #endpoint="http://127.0.0.1:8000/recipes/recipes-list/"
 @api_view(['GET'])
 def recipe_list(request):
-    recipes = Recipe.objects.all()
     page_number = request.GET.get('page')
+    query = request.GET.get('query')
+    if query:
+        recipes = Recipe.objects.filter(name__icontains=query)
+    else:
+        recipes = Recipe.objects.all()
     #set a default page number if not specified
-    recipes = paginated_data(recipes, page_number,20)
-    return JsonResponse({"data": [recipe.to_dict() for recipe in recipes]},json_dumps_params={'indent': 4})
+    recipes = paginated_data(recipes, page_number , 50)
+    return JsonResponse({
+            "max_pages":recipes.paginator.num_pages,
+            "data": [recipe.to_dict() for recipe in recipes]
+        }
+        ,json_dumps_params={'indent': 4})
 
 
 #a get method to get a filtred recipe list
@@ -45,10 +53,17 @@ def recipe_list(request):
 def filterd_recipe_list(request):
     if request.method == 'GET':
         query = request.GET.get('query')
-        recipes = Recipe.objects.filter(name__icontains=query)
+        if query is None:
+            recipes = Recipe.objects.all()
+        else:
+            recipes = Recipe.objects.filter(name__icontains=query)
         page_number = request.GET.get('page')
-        recipes = paginated_data(recipes, page_number,6)
-        return JsonResponse({"data": [recipe.to_dict() for recipe in recipes]},json_dumps_params={'indent': 4})
+
+        return JsonResponse({
+                "max_pages":recipes.paginator.num_pages,
+                "data": [recipe.to_dict() for recipe in recipes]
+            }
+            ,json_dumps_params={'indent': 4})
 
 
 #get a recipe by slug
@@ -104,4 +119,4 @@ def update_recipe(request, slug):
             for vedio in data['vedios']:
                 recipe.vedios.create(url=vedio)
         recipe.save()
-        return JsonResponse({"data": recipe.to_dict()},json_dumps_params={'indent': 4})
+        return JsonResponse({"data": recipe.to_dict() } ,json_dumps_params={'indent': 4})

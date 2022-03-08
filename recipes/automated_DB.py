@@ -12,8 +12,10 @@ from django.http import JsonResponse
 from .models import Recipe
 import requests
 from rest_framework.decorators import api_view
-from .utils import create_recipe_by_data
 import time
+
+from .utils import create_recipe_by_data
+
 def auto_add_one_recipe(url):
     #get the data from the server we host with the flask server 
     endpoint = "https://sea-of-food.herokuapp.com/recipe-details"
