@@ -3,6 +3,8 @@ from django.shortcuts import render , redirect
 from django.http import JsonResponse
 from .models import Recipe
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 #rest framework
 from .serializers import RecipeSerializer
 from rest_framework.response import Response
@@ -39,10 +41,10 @@ def recipe_list(request):
     else:
         recipes = Recipe.objects.all()
     #set a default page number if not specified
-    recipes = paginated_data(recipes, page_number , 50)
+    recipes = paginated_data(recipes, page_number , 25)
     return JsonResponse({
             "max_pages":recipes.paginator.num_pages,
-            "data": [recipe.to_dict() for recipe in recipes]
+            "data": [recipe.to_dict for recipe in recipes]
         }
         ,json_dumps_params={'indent': 4})
 
@@ -61,7 +63,7 @@ def filterd_recipe_list(request):
 
         return JsonResponse({
                 "max_pages":recipes.paginator.num_pages,
-                "data": [recipe.to_dict() for recipe in recipes]
+                "data": [recipe.to_dict for recipe in recipes]
             }
             ,json_dumps_params={'indent': 4})
 
@@ -71,7 +73,7 @@ def filterd_recipe_list(request):
 @api_view(['GET'])
 def get_recipe_by_slug(request, slug):
     recipe = Recipe.objects.get(slug=slug)
-    return JsonResponse(recipe.to_dict() , json_dumps_params={'indent': 4})
+    return JsonResponse(recipe.to_dict , json_dumps_params={'indent': 4})
 
 
 #a delete method to delete a recipe by slug from the database
@@ -89,10 +91,13 @@ def delete_recipe_by_slug(request, slug):
 @api_view(['POST'])
 def create_recipe(request):
     if request.method == 'POST':
-        data = request.data
-        recipe = create_recipe_by_data(data = data , Recipe = Recipe)
-        return JsonResponse({"data": recipe.to_dict()},json_dumps_params={'indent': 4})
-
+        try:
+            data = request.data
+            recipe = create_recipe_by_data(data = data , Recipe = Recipe ,user = request.user)
+            return JsonResponse({"data": recipe.to_dict},json_dumps_params={'indent': 4})
+        except Exception as e:
+            print(e)
+            return JsonResponse({"message": "You need to be logged in to create a recipe"})
 
 #a put method to update a recipe
 #endpoint = "http://"
@@ -119,4 +124,4 @@ def update_recipe(request, slug):
             for vedio in data['vedios']:
                 recipe.vedios.create(url=vedio)
         recipe.save()
-        return JsonResponse({"data": recipe.to_dict() } ,json_dumps_params={'indent': 4})
+        return JsonResponse({"data": recipe.to_dict } ,json_dumps_params={'indent': 4})

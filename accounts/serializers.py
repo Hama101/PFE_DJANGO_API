@@ -2,7 +2,10 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
+from .models import Profile
 
+from recipes.serializers import ImageSerializer
+#User serializers
 class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
@@ -22,14 +25,17 @@ class UserSerializer(serializers.ModelSerializer):
         password2 = self.validated_data['password2']
         if password != password2:
             raise serializers.ValidationError({'password': 'Passwords must match.'})
-        user.set_password(password)
+        user.set_password(password)        
         user.save()
+        #creating profile with null values and assgin it for the user when ever we create the user
+        profile = Profile(user=user)
+        profile.save()
 
         return user
 
 
 
-
+#login serializers
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
@@ -41,48 +47,8 @@ class LoginSerializer(serializers.Serializer):
         raise serializers.ValidationError("Incorrect Credentials")
 
 
-# class ProfilSerializer(serializers.ModelSerializer):
-#     class Meta :
-#         model = Profil
-#         fields = '__all__'
-
-#     def	save(self):
-#         user = self.validated_data['user']
-#         if not user:
-#             raise serializers.ValidationError({'user': 'user must match.'})
-#         profil = Profil(
-#             user = user ,
-#             is_chef = self.validated_data['is_chef']
-#         )
-#         profil.save()
-#         return profil
-
-# class PostSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Post
-#         fields = '__all__'
-
-#     def	save(self):
-#         user = self.validated_data['user']
-#         if not user:
-#             raise serializers.ValidationError({'user': 'user must match.'})
-#         if not user.profil.is_chef:
-#             raise serializers.ValidationError({'user': 'user must be a cheff to add post.'})
-#         post = Post(
-#         user = user ,
-#         title = self.validated_data['title'],
-#         description = self.validated_data['description'],
-#         #img = self.validated_data['img'],
-#         price = self.validated_data['price'],
-#         )
-#         post.save()
-#         return post
-
-#     def update(self , instance , validated_data):
-#         user = User.objects.get(id = validated_data.get('user', instance.user))
-#         instance.user = user
-#         instance.title = validated_data.get('title', instance.title)
-#         instance.description = validated_data.get('description', instance.description)
-#         instance.price = validated_data.get('price', instance.price)
-#         instance.save()
-#         return instance
+#profile serializers
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['avatar', 'bg_image']

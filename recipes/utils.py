@@ -4,6 +4,7 @@ import random
 from django.utils.text import slugify
 
 
+
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -33,8 +34,9 @@ def create_new_ref_number():
     return str(random.randint(10000, 99999))
 
 
-def create_recipe_by_data(data , Recipe):
-    recipe = Recipe()
+
+def create_recipe_by_data(data , Recipe , user):
+    recipe = Recipe(user = user)
     if data["name"] is not None:
         recipe.name = data["name"]
     if data['time'] is not None:

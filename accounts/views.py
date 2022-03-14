@@ -54,6 +54,7 @@ class UserAPI(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+
 #this view function hundel the user singup process
 @swagger_auto_schema(method='post', request_body=UserSerializer)
 @api_view(['POST'])
@@ -76,21 +77,32 @@ def signup(request):
         return Response(data)
 
 
-# @api_view(['POST'])
-# def addprofil(request):
-#     if request.method == 'POST':
-#         serializer = ProfilSerializer(data=request.data)
-#         data = {}
-#         print("validating")
-#         if serializer.is_valid():
-#             print("validated")
-#             profil = serializer.save()
-#             data['response'] = 'successfully registered new profil.'
-#             print(profil.user)
-#             data['user'] = profil.user.username
-#             data['is_chef'] = profil.is_chef
-#         else:
-#             data = serializer.errors
-#         return Response(data)
+#get profile by username
+@api_view(['GET'])
+def profile(request, username):
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user=user)
+    data = profile.to_dict
+    return Response(data)
 
+
+#update the profile of the user
+@swagger_auto_schema(method='put', request_body=ProfileSerializer)
+@api_view(['PUT'])
+def update_profile(request):
+    try:
+        profile = Profile.objects.get(user=request.user)
+        if request.method == 'PUT':
+            serializer = ProfileSerializer(instance=profile , data=request.data)
+            data = {}
+            if serializer.is_valid():
+                serializer.save()
+                data['response'] = 'successfully updated profile.'
+                data['profile'] = serializer.data
+            else:
+                data = serializer.errors
+                return Response(data)
+            return Response(data)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND , data={'response':'profile not found or you need to be logged in'})
 

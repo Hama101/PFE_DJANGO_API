@@ -2,6 +2,10 @@ from django.db import models
 from .utils import unique_slug_generator
 from django.db.models.signals import pre_save
 
+from django.contrib.auth.models import User
+
+
+
 import datetime
 #get the current date and time
 
@@ -11,7 +15,6 @@ import datetime
 #a model class to represent the image table in the database with image url and a possibility for image file
 class Image(models.Model):
     url = models.CharField(max_length=8000, blank=True, null=True)
-    # image_file = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def __str__(self):
         return self.url
@@ -42,11 +45,16 @@ class Instruction(models.Model):
 #a model class to represent the recipe table in the database with recipe name, many to many field to image ...etc
 class Recipe(models.Model):
     slug = models.SlugField(max_length=250, null=True, blank=True, unique=True)
+    
+    #relationship with profiles
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
     #relationship with tables
     images = models.ManyToManyField(Image )
     ingredients = models.ManyToManyField(Ingredient )
     instructions = models.ManyToManyField(Instruction )
     vedios = models.ManyToManyField(Vedio)
+
     #fields
     name = models.CharField(max_length=1000, blank=True, null=True)
     rating = models.CharField(max_length=1000, blank=True, null=True)
@@ -57,7 +65,9 @@ class Recipe(models.Model):
     def __str__(self):
         return f"{self.name}--->{self.slug}"
     
-
+    
+    
+    
     @property
     def image_urls(self):
         return [image.url for image in self.images.all() if "http" in image.url]
@@ -68,7 +78,6 @@ class Recipe(models.Model):
             return self.image_urls[0]
         else:
             return None
-    
     
     @property
     def ingredients_details(self):
@@ -81,7 +90,8 @@ class Recipe(models.Model):
     @property
     def vedios_urls(self):
         return [vedio.url for vedio in self.vedios.all()]
-
+    
+    @property
     def to_dict(self):
         return {
             "thumbnail":self.thumbnail,
@@ -94,6 +104,10 @@ class Recipe(models.Model):
             "slug": self.slug,
             "rating": self.rating,
             "time": self.time,
+
+            "restaurant": self.user.username if self.user else None,
+
+            "created_at": self.created_at,
         }
 
 
