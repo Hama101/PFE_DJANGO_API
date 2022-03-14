@@ -80,10 +80,15 @@ def signup(request):
 #get profile by username
 @api_view(['GET'])
 def profile(request, username):
-    user = User.objects.get(username=username)
-    profile = Profile.objects.get(user=user)
-    data = profile.to_dict
-    return Response(data)
+    try:
+        user = User.objects.get(username=username)
+        profile = Profile.objects.get(user=user)
+        data = profile.to_dict
+        return Response(data)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND, data={'error': 'User not found'})
+    except Profile.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND , data={"error": "Profile not found"})
 
 
 #update the profile of the user
@@ -92,7 +97,12 @@ def profile(request, username):
 def update_profile(request):
     try:
         profile = Profile.objects.get(user=request.user)
-        if request.method == 'PUT':
+    except Profile.DoesNotExist:
+        #create a new profile
+        profile = Profile(user=request.user)
+        profile.save()
+
+    if request.method == 'PUT':
             serializer = ProfileSerializer(instance=profile , data=request.data)
             data = {}
             if serializer.is_valid():
@@ -103,6 +113,3 @@ def update_profile(request):
                 data = serializer.errors
                 return Response(data)
             return Response(data)
-    except:
-        return Response(status=status.HTTP_404_NOT_FOUND , data={'response':'profile not found or you need to be logged in'})
-
