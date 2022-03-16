@@ -104,6 +104,7 @@ def profile(request, username):
 @swagger_auto_schema(method='put', request_body=ProfileSerializer)
 @api_view(['PUT'])
 def update_profile(request):
+    print(request.user)
     try:
         profile = Profile.objects.get(user=request.user)
     except Profile.DoesNotExist:
