@@ -151,12 +151,18 @@ class RegisterView(APIView):
                             email=email,
                             password=password,
                         )
-
+                        
                         user.save()
+                        #create a new null profile
+                        profile = Profile.objects.create(user=user)
+                        profile.save()
 
                         if User.objects.filter(username=username).exists():
-                            return Response(
-                                {'success': 'Account created successfully'},
+                            return Response({
+                                'success': 'Account created successfully',
+                                'user': UserSerializer(user).data,
+                                'profile': ProfileSerializer(profile).data,
+                                },
                                 status=status.HTTP_201_CREATED
                             )
                         else:
@@ -179,7 +185,8 @@ class RegisterView(APIView):
                     {'error': 'Passwords do not match'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        except:
+        except Exception as e:
+            print(e)
             return Response(
                 {'error': 'Something went wrong when trying to register account'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
