@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 #rest framework
 from .serializers import RecipeSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view , permission_classes
+from rest_framework import generics, permissions
 from drf_yasg.utils import swagger_auto_schema
 #my utils
 from .utils import create_recipe_by_data
@@ -26,6 +27,7 @@ def paginated_data(data,page_number=None,page_size=10):
 
 # Create your views here.
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def index(request):
     return JsonResponse({'site':'https://sea-of-food.herokuapp.com/'})
 
@@ -33,6 +35,7 @@ def index(request):
 #a get method to get all the list of recipes
 #endpoint="http://127.0.0.1:8000/recipes/recipes-list/"
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def recipe_list(request):
     page_number = request.GET.get('page')
     query = request.GET.get('query')
@@ -52,6 +55,7 @@ def recipe_list(request):
 #a get method to get a filtred recipe list
 #endpoint = "http://127.0.0.1:8000/recipes/recipes-list/search?query=pizza"
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def filterd_recipe_list(request):
     if request.method == 'GET':
         query = request.GET.get('query')
@@ -73,6 +77,7 @@ def filterd_recipe_list(request):
 #get a recipe by slug
 #endpoint = "http://127.0.0.1:8000/recipes/recipes-list/pesto-pizza/"
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def get_recipe_by_slug(request, slug):
     recipe = Recipe.objects.get(slug=slug)
     return JsonResponse(recipe.to_dict , json_dumps_params={'indent': 4})
