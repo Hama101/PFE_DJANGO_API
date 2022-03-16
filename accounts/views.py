@@ -137,6 +137,7 @@ class RegisterView(APIView):
             first_name = data['first_name']
             last_name = data['last_name']
             username = data['username']
+            email = data['email']
             password = data['password']
             re_password = data['re_password']
 
@@ -147,6 +148,7 @@ class RegisterView(APIView):
                             first_name=first_name,
                             last_name=last_name,
                             username=username,
+                            email=email,
                             password=password,
                         )
 

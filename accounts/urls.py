@@ -5,7 +5,7 @@ app_name = 'accounts'
 
 urlpatterns = [
     #users
-    path('signup/',v.signup,name="signup"),
+    #path('signup/',v.signup,name="signup"),
     
     #profiles
     path('profiles-list/',v.profiles_list,name="profiles-list"),
