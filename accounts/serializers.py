@@ -6,6 +6,7 @@ from .models import Profile
 
 from recipes.serializers import ImageSerializer
 #User serializers
+
 class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 

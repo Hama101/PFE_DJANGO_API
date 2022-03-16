@@ -16,7 +16,7 @@ import time
 
 from .utils import create_recipe_by_data
 
-def auto_add_one_recipe(url):
+def auto_add_one_recipe(url , user):
     #get the data from the server we host with the flask server 
     endpoint = "https://sea-of-food.herokuapp.com/recipe-details"
     reqest_body = {'url':f'{url}'}
@@ -30,7 +30,7 @@ def auto_add_one_recipe(url):
         pass
 
     #create an instance of the recipe model
-    recipe = create_recipe_by_data(data = data , Recipe = Recipe)
+    recipe = create_recipe_by_data(data = data , Recipe = Recipe , user = user)
     print("Created a new recipe ", recipe.slug)
     pass
 
@@ -38,6 +38,7 @@ def auto_add_one_recipe(url):
 @api_view(['GET'])
 def auto_add_recipes(request):
     #check if the request user is an admin
+    print(request.user)
     if not request.user.is_superuser:
         return JsonResponse({"message":"you are not allowed to do this"})
 
@@ -53,7 +54,7 @@ def auto_add_recipes(request):
             url = line.strip()
             if url not in done_urls:
                 try:
-                    auto_add_one_recipe(url)
+                    auto_add_one_recipe(url, request.user)
                 except Exception as e:
                     pass
                 #write the line in done.txt

@@ -59,8 +59,10 @@ def filterd_recipe_list(request):
             recipes = Recipe.objects.all()
         else:
             recipes = Recipe.objects.filter(name__icontains=query)
-        page_number = request.GET.get('page')
 
+        page_number = request.GET.get('page')
+        
+        recipes = paginated_data(recipes, page_number , 25)
         return JsonResponse({
                 "max_pages":recipes.paginator.num_pages,
                 "data": [recipe.to_dict for recipe in recipes]
