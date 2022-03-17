@@ -15,7 +15,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view 
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
-
+#my utils imports
+from .EmailSender import Emailer
 
 #classes for login api auth 
 class LoginAPI(KnoxLoginView):
@@ -68,6 +69,7 @@ def signup(request):
             data['id']= user.id
             data['email'] = user.email
             data['username'] = user.username
+            #send mail here
         else:
             data = serializer.errors
             return Response(data)
@@ -156,6 +158,14 @@ class RegisterView(APIView):
                         #create a new null profile
                         profile = Profile.objects.create(user=user)
                         profile.save()
+                        
+                        #send mail
+                        data_mail = {
+                            "email_subject": "Welcome to Sea-of-Food where you can find the best food in the world !",
+                            "email_body": "Thank you for signing up to Sea-of-Food, we hope you enjoy your time here !",
+                            "email_to": email,
+                        }
+                        Emailer.send_mail(data_mail)
 
                         if User.objects.filter(username=username).exists():
                             return Response({
