@@ -163,7 +163,7 @@ class RegisterView(APIView):
                         data_mail = {
                             "email_subject": "Welcome to Sea-of-Food where you can find the best food in the world !",
                             "email_body": "Thank you for signing up to Sea-of-Food, we hope you enjoy your time here !",
-                            "email_to": email,
+                            "to_email": email,
                         }
                         Emailer.send_email(data_mail)
 
