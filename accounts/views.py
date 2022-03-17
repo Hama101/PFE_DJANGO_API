@@ -165,7 +165,7 @@ class RegisterView(APIView):
                             "email_body": "Thank you for signing up to Sea-of-Food, we hope you enjoy your time here !",
                             "email_to": email,
                         }
-                        Emailer.send_mail(data_mail)
+                        Emailer.send_email(data_mail)
 
                         if User.objects.filter(username=username).exists():
                             return Response({
