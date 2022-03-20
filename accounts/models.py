@@ -10,7 +10,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE , unique=True)
     
     #image as a string
-    avatar = models.CharField(max_length=8000 , null=True , blank=True )
+    avatar = models.CharField(max_length=8000 , null=True , blank=True , default="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png" )
     bg_image = models.CharField(max_length=8000 , null=True , blank=True )
 
     #recipes the recipes will be linked by the forgien key to the profile
