@@ -12,7 +12,7 @@ from knox.views import LoginView as KnoxLoginView
 from .serializers import *
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view 
+from rest_framework.decorators import api_view , permission_classes 
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
 #my utils imports
@@ -81,6 +81,7 @@ def signup(request):
 
 #get profile by username
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def profiles_list(request):
     profiles = Profile.objects.all()
     if profiles.count():
@@ -90,6 +91,7 @@ def profiles_list(request):
 
 #get profile by username
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def profile(request, username):
     try:
         user = User.objects.get(username=username)
@@ -206,14 +208,19 @@ class RegisterView(APIView):
 class LoadUserView(APIView):
     def get(self, request, format=None):
         try:
-            user = request.user
+            user = User.objects.get(username=request.user.username)
+            #load the user profile
+            profile = Profile.objects.get(user=user)
             user = UserSerializer(user)
-
             return Response(
-                {'user': user.data},
+                {
+                    'user': user.data,
+                    'profile': profile.to_dict,
+                },
                 status=status.HTTP_200_OK
             )
-        except:
+        except Exception as e:
+            print(e)
             return Response(
                 {'error': 'Something went wrong when trying to load user'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
