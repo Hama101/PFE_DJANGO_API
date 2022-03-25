@@ -57,7 +57,7 @@ class Recipe(models.Model):
 
     #fields
     name = models.CharField(max_length=1000, blank=True, null=True)
-    rating = models.CharField(max_length=1000, blank=True, null=True)
+    rating = models.CharField(max_length=1000, blank=True, null=True , default="0 Ratings")
     time = models.CharField(max_length=1000, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True , null=True , blank=True)

@@ -97,6 +97,9 @@ def delete_recipe_by_slug(request, slug):
 @swagger_auto_schema(method='post', request_body=RecipeSerializer)
 @api_view(['POST'])
 def create_recipe(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"message": "you are not authenticated"} , status=401)
+
     if request.method == 'POST':
         try:
             data = request.data
@@ -104,7 +107,7 @@ def create_recipe(request):
             return JsonResponse({"data": recipe.to_dict},json_dumps_params={'indent': 4})
         except Exception as e:
             print(e)
-            return JsonResponse({"message": "You need to be logged in to create a recipe"})
+            return JsonResponse({"message": "You need to be logged in to create a recipe"} , status=401)
 
 #a put method to update a recipe
 #endpoint = "http://"
