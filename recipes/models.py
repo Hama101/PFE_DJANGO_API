@@ -106,7 +106,7 @@ class Recipe(models.Model):
             "rating": self.rating,
             "time": self.time,
 
-            "restaurant": self.user.username if self.user else None,
+            "restaurant": self.user.username if self.user else "I-FOOD-TEAM",
 
             "created_at": self.created_at,
         }
