@@ -9,7 +9,7 @@ from recipes.models import Recipe
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE , unique=True)
     
-    verified = models.BooleanField(default=True)#setting default as true just for test purposes
+    #verified = models.BooleanField(default=True)#setting default as true just for test purposes
 
     #image as a string
     avatar = models.CharField(max_length=8000 , null=True , blank=True , default="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper.png" )
