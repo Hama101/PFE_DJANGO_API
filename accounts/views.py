@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 from .EmailSender import Emailer
 
 
-HOST = "http://localhost:8000"
+HOST = "https://sea-of-food-api.herokuapp.com"
 FRONTEND_HOST = "http://localhost:3000"
 
 
@@ -173,7 +173,7 @@ class RegisterView(APIView):
                         #send mail
                         data_mail = {
                             "email_subject": "Welcome to IFOOD where you can find the best food in the world !",
-                            "email_body": f"Thank you for signing up to IFOOD, we hope you enjoy your time here !\n\n to verify your email address, please click on the link below:\n\n {HOST}/accounts/set-profile-verified/{user.username}\n\n Best regards,\n\n IFOOD team",
+                            "email_body": f"Thank you for signing up to IFOOD {user.username}, we hope you enjoy your time here !\n\n to verify your email address, please click on the link below:\n\n {HOST}/accounts/set-profile-verified/{user.username}\n\n Best regards,\n\n IFOOD team",
                             "to_email": email,
                         }
                         Emailer.send_email(data_mail)
