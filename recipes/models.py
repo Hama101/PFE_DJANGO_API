@@ -5,7 +5,6 @@ from django.db.models.signals import pre_save
 from django.contrib.auth.models import User
 
 
-
 import datetime
 #get the current date and time
 

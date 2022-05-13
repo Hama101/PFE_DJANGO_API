@@ -12,6 +12,8 @@ urlpatterns = [
     path('profile/<str:username>/',v.profile,name="profile"),
     path('update-profile/',v.update_profile ,name="update-profile"),
 
+    #verfiication
+    path('set-profile-verified/<str:username>/',v.set_profile_verified,name="set-profile-verified"),
 ]
 
 

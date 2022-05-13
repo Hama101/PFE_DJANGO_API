@@ -18,6 +18,12 @@ from rest_framework.views import APIView
 #my utils imports
 from .EmailSender import Emailer
 
+
+HOST = "http://localhost:8000"
+FRONTEND_HOST = "http://localhost:3000"
+
+
+
 #classes for login api auth 
 class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
@@ -43,8 +49,6 @@ class LoginAPI(KnoxLoginView):
                 context=self.get_context()
             ).data
         return data
-
-
 #this class hundels the user permissions and permissions for the api
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [
@@ -77,6 +81,11 @@ def signup(request):
         user = User.objects.get(username=data['username'])
         data["token"] = AuthToken.objects.create(user)[1]
         return Response(data)
+
+'''
+    the above section is the old version of our api that we will delete soon !
+'''
+
 
 
 #get profile by username
@@ -163,8 +172,8 @@ class RegisterView(APIView):
                         
                         #send mail
                         data_mail = {
-                            "email_subject": "Welcome to Sea-of-Food where you can find the best food in the world !",
-                            "email_body": "Thank you for signing up to Sea-of-Food, we hope you enjoy your time here !",
+                            "email_subject": "Welcome to IFOOD where you can find the best food in the world !",
+                            "email_body": f"Thank you for signing up to IFOOD, we hope you enjoy your time here !\n\n to verify your email address, please click on the link below:\n\n {HOST}/accounts/set-profile-verified/{user.username}\n\n Best regards,\n\n IFOOD team",
                             "to_email": email,
                         }
                         Emailer.send_email(data_mail)
@@ -184,7 +193,7 @@ class RegisterView(APIView):
                             )
                     else:
                         return Response(
-                            {'error': 'Username already exists'},
+                            {'error': 'Username already exists!'},
                             status=status.HTTP_400_BAD_REQUEST
                         )
                 else:
@@ -225,3 +234,19 @@ class LoadUserView(APIView):
                 {'error': 'Something went wrong when trying to load user'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+#get profile by username
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def set_profile_verified(request , username):
+    try:
+        user = User.objects.get(username=username)
+        profile = Profile.objects.get(user=user)
+        profile.verified = True
+        profile.save()
+        return redirect('http://localhost:3000')
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND, data={'error': 'User not found'})
+    except Profile.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND , data={"error": "Profile not found"})

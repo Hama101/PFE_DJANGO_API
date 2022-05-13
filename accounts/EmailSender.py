@@ -5,7 +5,6 @@ import threading
 
 
 class EmailThread(threading.Thread):
-
     def __init__(self, email):
         self.email = email
         threading.Thread.__init__(self)
@@ -23,6 +22,6 @@ class Emailer:
             from_email= settings.EMAIL_HOST_USER,
             to=[data['to_email']]
             )
-
+        print("Sending email to: " + data['to_email'])
         #to the mail on a threading without blocking the main thread
         EmailThread(email).start()
