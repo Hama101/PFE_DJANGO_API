@@ -49,7 +49,7 @@ class Recipe(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     #relationship with tables
-    images = models.ManyToManyField(Image )
+    images = models.ManyToManyField(Image , default=None)
     ingredients = models.ManyToManyField(Ingredient )
     instructions = models.ManyToManyField(Instruction )
     vedios = models.ManyToManyField(Vedio)
