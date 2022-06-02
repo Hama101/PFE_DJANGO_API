@@ -70,7 +70,8 @@ class Recipe(models.Model):
     
     @property
     def image_urls(self):
-        if self.images.all():
+        if self.images:
+            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
             return [image.url for image in self.images.all() if "http" in image.url]
         else:
             return ["https://images.themodernproper.com/billowy-turkey/production/posts/2019/Best-Kid-Friendly-Recipes-1.jpg?w=1200&auto=compress%2Cformat&fit=crop&dm=1604880029&s=62ecbc82edfd3a4b2b2864c7f147c3ed"]
