@@ -54,7 +54,8 @@ def create_recipe_by_data(data , Recipe , user):
     '''
     if data["images"] is not None:
         for image in data['images']:
-            recipe.images.create(url=image)
+            if image:
+                recipe.images.create(url=image)
     if data["ingredients"] is not None :
         for ingredient in data['ingredients']:
             recipe.ingredients.create(details=ingredient)

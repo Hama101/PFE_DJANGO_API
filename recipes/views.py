@@ -17,7 +17,7 @@ from .utils import create_recipe_by_data
 
 #usefull and global functions
 #this function is used to paginate some data
-def paginated_data(data,page_number=None,page_size=10):
+def paginated_data(data , page_number=None , page_size=10):
     if not page_number:
         page_number = 1
     paginator = Paginator(data, page_size)
@@ -66,7 +66,7 @@ def filterd_recipe_list(request):
 
         page_number = request.GET.get('page')
         
-        recipes = paginated_data(recipes, page_number , 25)
+        recipes = paginated_data(recipes, int(page_number) , 25)
         return JsonResponse({
                 "max_pages":recipes.paginator.num_pages,
                 "data": [recipe.to_dict for recipe in recipes]
@@ -120,7 +120,8 @@ def update_recipe(request, slug):
         recipe.save()
         if data["images"]:
             for image in data['images']:
-                recipe.images.create(url=image)
+                if image :
+                    recipe.images.create(url=image)
         if data["ingredients"]:
             for ingredient in data['ingredients']:
                 recipe.ingredients.create(details=ingredient)

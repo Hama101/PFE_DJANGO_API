@@ -4,11 +4,8 @@ from django.db.models.signals import pre_save
 
 from django.contrib.auth.models import User
 
-
 import datetime
 #get the current date and time
-
-
 
 
 #a model class to represent the image table in the database with image url and a possibility for image file
@@ -71,7 +68,6 @@ class Recipe(models.Model):
     @property
     def image_urls(self):
         if self.images:
-            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
             return [image.url for image in self.images.all() if "http" in image.url]
         else:
             return ["https://images.themodernproper.com/billowy-turkey/production/posts/2019/Best-Kid-Friendly-Recipes-1.jpg?w=1200&auto=compress%2Cformat&fit=crop&dm=1604880029&s=62ecbc82edfd3a4b2b2864c7f147c3ed"]
